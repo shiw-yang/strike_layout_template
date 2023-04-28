@@ -9,9 +9,9 @@ init:
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	go install github.com/shiw-yang/strike/cmd/protoc-gen-gin@latest
 	go install github.com/shiw-yang/strike/cmd/protoc-gen-go-errors@latest
+	go install github.com/shiw-yang/strike/cmd/strike@latest
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
 	go install github.com/google/wire/cmd/wire@latest
-	# go install github.com/shiw-yang/strike@latest
 
 .PHONY: api
 # generate api proto

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api.helloworld.v1;
+
+option go_package = "strike_layout_template/api/helloworld/v1;v1";
+
+service Menu {
+	rpc CreateMenu (CreateMenuRequest) returns (CreateMenuReply);
+	rpc UpdateMenu (UpdateMenuRequest) returns (UpdateMenuReply);
+	rpc DeleteMenu (DeleteMenuRequest) returns (DeleteMenuReply);
+	rpc GetMenu (GetMenuRequest) returns (GetMenuReply);
+	rpc ListMenu (ListMenuRequest) returns (ListMenuReply);
+}
+
+message CreateMenuRequest {}
+message CreateMenuReply {}
+
+message UpdateMenuRequest {}
+message UpdateMenuReply {}
+
+message DeleteMenuRequest {}
+message DeleteMenuReply {}
+
+message GetMenuRequest {}
+message GetMenuReply {}
+
+message ListMenuRequest {}
+message ListMenuReply {}
