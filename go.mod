@@ -1,9 +1,11 @@
 module strike_layout_template
 
-go 1.20
+go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.9.0
+	github.com/google/wire v0.5.0
+	github.com/shiw-yang/strike v0.0.0-20230428092814-5430442c1bca
 	google.golang.org/genproto v0.0.0-20230331144136-dcfb400f0633
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.30.0

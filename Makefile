@@ -1,6 +1,7 @@
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
 API_PROTO_FILES=$(shell find api -name *.proto)
+INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
 
 .PHONY: init
 # init env
@@ -29,6 +30,13 @@ api:
 build:
 	echo "todo"
 
+.PHONY: config
+# generate internal proto
+config:
+	protoc --proto_path=./internal \
+	       --proto_path=./third_party \
+ 	       --go_out=paths=source_relative:./internal \
+	       $(INTERNAL_PROTO_FILES)
 
 .PHONY: generate
 # generate
