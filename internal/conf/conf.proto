@@ -1,19 +1,25 @@
 syntax = "proto3";
-package kratos.api;
+package strike.api;
 
 option go_package = "strike_layout_template/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
+  // @inject_tag: mapstructure:"server"
   Server server = 1;
   Data data = 2;
 }
 
+// @inject_tag: mapstructure:"server"
 message Server {
+  // @inject_tag: mapstructure:"http"
   message HTTP {
+    // @inject_tag: mapstructure:"network"
     string network = 1;
+    // @inject_tag: mapstructure:"addr"
     string addr = 2;
+    // @inject_tag: mapstructure:"timeout"
     google.protobuf.Duration timeout = 3;
   }
   message GRPC {

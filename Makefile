@@ -26,9 +26,9 @@ api:
  	       $(API_PROTO_FILES)
 
 .PHONY: build
-# build todo
+# build
 build:
-	echo "todo"
+	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
 
 .PHONY: config
 # generate internal proto
@@ -37,6 +37,7 @@ config:
 	       --proto_path=./third_party \
  	       --go_out=paths=source_relative:./internal \
 	       $(INTERNAL_PROTO_FILES)
+	 protoc-go-inject-tag -input=./internal/conf/conf.pb.go
 
 .PHONY: generate
 # generate
