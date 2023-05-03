@@ -2,15 +2,26 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
+	"os"
 	"strike_layout_template/internal/conf"
 	"strike_layout_template/internal/server"
 
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+
+	_ "go.uber.org/automaxprocs"
 )
 
 var (
+	// Name is the name of the compiled software.
+	Name string
+	// Version is the version of the compiled software.
+	Version  string
 	flagconf string
+
+	id, _ = os.Hostname()
 )
 
 func init() {
@@ -20,13 +31,18 @@ func init() {
 func main() {
 	// init
 	flag.Parse()
+	loggerInit()
+	// logger.Println("start")
 	c := readConfig()
-	// start Server
-	err := server.NewServer(c.Server)
+	server, cancel, err := wireApp(c.Server, c.Data)
 	if err != nil {
 		panic(err)
 	}
-	//	stop channel
+	defer cancel()
+	if err := server.RunServer(c.Server); err != nil {
+		panic(err)
+	}
+
 }
 
 func readConfig() *conf.Bootstrap {
@@ -40,6 +56,19 @@ func readConfig() *conf.Bootstrap {
 	if UnmarshalErr != nil {
 		panic(UnmarshalErr)
 	}
-	fmt.Println(&c)
 	return &c
+}
+
+func newApp(gs *grpc.Server, hs *gin.Engine) *server.Server {
+	return server.New(
+		server.ID(id), server.Name(Name),
+		server.Metadata(map[string]string{}),
+		server.NewServer(hs, gs),
+		server.NewServer(hs, gs),
+	)
+}
+
+func loggerInit() log.Logger {
+	// TODO: init logger
+	return log.Logger{}
 }

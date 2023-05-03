@@ -2,13 +2,11 @@
 strike project template
 
 # TODO
-- 写一个最小化部署的模板
 - 加入日志配置
 - 加入grpc服务
 - 优雅监听服务退出
-- 写一个快速部署的dockerfile
 - 连接数据库
-- dockerfile快速部署数据库
+- 写一个docker-compose方便快速进入开发环境
 
 ## Docker
 ```bash

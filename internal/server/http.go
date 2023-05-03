@@ -10,14 +10,15 @@ import (
 	"strike_layout_template/internal/conf"
 )
 
-func NewHTTPServer(c *conf.Server) (*gin.Engine, error) {
+// NewHTTPServer .
+func NewHTTPServer(c *conf.Server, greeterService *service.GreeterService) *gin.Engine {
 	httpServer := gin.New()
 	if c.Http.Timeout != nil {
 		httpServer.Use(middleware.HTTPResponseTimeoutMiddleware(c.Http.Timeout.AsDuration()))
 	}
 	httpServer.Use(gin.Recovery())
 	registerHTTPService(httpServer)
-	return httpServer, nil
+	return httpServer
 }
 
 func registerHTTPService(engine *gin.Engine) {
