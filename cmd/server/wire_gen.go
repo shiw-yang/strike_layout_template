@@ -12,7 +12,9 @@ import (
 	"strike_layout_template/internal/data"
 	"strike_layout_template/internal/server"
 	"strike_layout_template/internal/service"
+)
 
+import (
 	_ "go.uber.org/automaxprocs"
 )
 

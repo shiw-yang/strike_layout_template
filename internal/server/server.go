@@ -1,11 +1,18 @@
 package server
 
 import (
-	"log"
+	"context"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
 	"strike_layout_template/internal/conf"
+	"sync"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 )
 
@@ -19,9 +26,8 @@ type Server struct {
 	version  string
 	metadata map[string]string
 
-	logger *log.Logger
-
-	httpServer *gin.Engine
+	httpSrv    *http.Server
+	ginServer  *gin.Engine
 	grpcServer *grpc.Server
 }
 
@@ -31,7 +37,7 @@ type Option func(o *Server)
 // NewServer 配置server
 func NewServer(hs *gin.Engine, gs *grpc.Server) Option {
 	return func(server *Server) {
-		server.httpServer = hs
+		server.ginServer = hs
 		server.grpcServer = gs
 	}
 
@@ -58,13 +64,6 @@ func Version(version string) Option {
 	}
 }
 
-// Logger .
-func Logger(logger *log.Logger) Option {
-	return func(server *Server) {
-		server.logger = logger
-	}
-}
-
 // Metadata .
 func Metadata(metadata map[string]string) Option {
 	return func(server *Server) {
@@ -74,9 +73,51 @@ func Metadata(metadata map[string]string) Option {
 
 // RunServer 启动server
 func (server *Server) RunServer(c *conf.Server) error {
-	//TODO: get url
-	err := server.httpServer.Run(c.Http.Addr)
-	return err
+	//TODO: use errgroup to Run http and grpc server
+	sctx := context.Background()
+	eg, ctx := errgroup.WithContext(sctx)
+	wg := sync.WaitGroup{}
+
+	wg.Add(1)
+	// http server
+	eg.Go(func() error {
+		wg.Done()
+		server.httpSrv = &http.Server{
+			Addr:    c.Http.Addr,
+			Handler: server.ginServer,
+		}
+		return server.httpSrv.ListenAndServe()
+	})
+	wg.Add(1)
+	// grpc server
+	eg.Go(func() error {
+		wg.Done()
+		l, err := net.Listen("tcp", ":"+c.Grpc.Port)
+		if err != nil {
+			return err
+		}
+		if err := server.grpcServer.Serve(l); err != nil && err != http.ErrServerClosed {
+			return err
+		}
+		return nil
+	})
+	wg.Wait()
+	// wait for exit signal
+	ch := make(chan os.Signal, 1)
+	sigs := []os.Signal{syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT}
+	signal.Notify(ch, sigs...)
+	eg.Go(func() error {
+		select {
+		case <-ch:
+			return server.stop()
+		case <-ctx.Done():
+			return nil
+		}
+	})
+	if err := eg.Wait(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // New .
@@ -86,4 +127,10 @@ func New(opts ...Option) *Server {
 		opt(server)
 	}
 	return server
+}
+
+func (server *Server) stop() error {
+	server.grpcServer.GracefulStop()
+	server.httpSrv.Shutdown(context.Background())
+	return nil
 }

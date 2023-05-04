@@ -22,9 +22,13 @@ message Server {
     // @inject_tag: mapstructure:"timeout"
     google.protobuf.Duration timeout = 3;
   }
+  // @inject_tag: mapstructure:"grpc"
   message GRPC {
+    // @inject_tag: mapstructure:"network"
     string network = 1;
-    string addr = 2;
+    // @inject_tag: mapstructure:"port"
+    string port = 2;
+    // @inject_tag: mapstructure:"timeout"
     google.protobuf.Duration timeout = 3;
   }
   HTTP http = 1;

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"os"
 	"strike_layout_template/internal/conf"
 	"strike_layout_template/internal/server"
@@ -25,7 +26,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "conf", "./data/configs/conf.yaml", "config path, eg: -conf config.yaml")
 }
 
 func main() {
@@ -39,7 +40,7 @@ func main() {
 		panic(err)
 	}
 	defer cancel()
-	if err := server.RunServer(c.Server); err != nil {
+	if err := server.RunServer(c.Server); err != nil && err != http.ErrServerClosed {
 		panic(err)
 	}
 
@@ -63,7 +64,6 @@ func newApp(gs *grpc.Server, hs *gin.Engine) *server.Server {
 	return server.New(
 		server.ID(id), server.Name(Name),
 		server.Metadata(map[string]string{}),
-		server.NewServer(hs, gs),
 		server.NewServer(hs, gs),
 	)
 }

@@ -2,12 +2,11 @@ package server
 
 import (
 	v1 "strike_layout_template/api/helloworld/v1"
+	"strike_layout_template/internal/conf"
 	"strike_layout_template/internal/middleware"
 	"strike_layout_template/internal/service"
 
 	"github.com/gin-gonic/gin"
-
-	"strike_layout_template/internal/conf"
 )
 
 // NewHTTPServer .

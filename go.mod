@@ -8,6 +8,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/spf13/viper v1.15.0
 	go.uber.org/automaxprocs v1.5.2
+	golang.org/x/sync v0.1.0
 	google.golang.org/genproto v0.0.0-20230331144136-dcfb400f0633
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.30.0

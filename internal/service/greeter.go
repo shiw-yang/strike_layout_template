@@ -18,5 +18,7 @@ func NewGreeterService(uc *biz.GreeterUsecase) *GreeterService {
 }
 
 func (s *GreeterService) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{}, nil
+	return &pb.HelloReply{
+		Message: "Hello " + req.Name,
+	}, nil
 }
